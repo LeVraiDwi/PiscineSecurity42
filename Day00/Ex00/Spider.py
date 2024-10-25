@@ -2,6 +2,7 @@ from urllib.request import urlopen, Request
 import requests
 import shutil
 from bs4 import BeautifulSoup
+import argparse
 
 def baseDomaine(url: str) -> str:
     protocol : str
@@ -21,7 +22,7 @@ def baseDomaine(url: str) -> str:
     domain = url[: endDomain + protocol.__len__()]
     return domain
 
-def ScrapImg(Url: str, depth: int):
+def ScrapImg(url: str, depth: int = 1, ):
     url = "http://olympus.realpython.org/profiles/aphrodite"
     req = Request(
         url=url, 
@@ -58,7 +59,10 @@ def ScrapImg(Url: str, depth: int):
     return
 
 def main():
-    
+    parser = argparse.ArgumentParser("Program the web scrap img from a url")
+    #parser.add_argument('-r', action='strore_true', help="recursively download omg from the url")
+    ScrapImg("http://olympus.realpython.org/profiles/aphrodite")
+
 
 if __name__ == "__main__":
     main()
