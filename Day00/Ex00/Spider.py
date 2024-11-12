@@ -22,8 +22,7 @@ def baseDomaine(url: str) -> str:
     domain = url[: endDomain + protocol.__len__()]
     return domain
 
-def ScrapImg(url: str, depth: int = 1, ):
-    url = "http://olympus.realpython.org/profiles/aphrodite"
+def ScrapImg(args: argparse.Namespace, url: str, depth: int):
     req = Request(
         url=url, 
         headers={'User-Agent': 'Mozilla/5.0'}
@@ -33,7 +32,7 @@ def ScrapImg(url: str, depth: int = 1, ):
     if domain == "":
         print("wrong url")
         return
-    page: _UrlopenRet
+    page: requests._UrlopenRet
     try:
         page = urlopen(req)
     except:
@@ -42,26 +41,39 @@ def ScrapImg(url: str, depth: int = 1, ):
     html_bytes = page.read()
     html = html_bytes.decode("utf-8")
     extract = BeautifulSoup(html, 'html.parser')
+    if args.r == True and depth < args.l:
+        for urls in extract.find_all('href'):
+            ScrapImg(args, urls, depth + 1)
     for start in extract.find_all('img'):
         try:
             out = start.get('src')
+            print(out)
+            name = str.split(out, '/')
+            name = name[len(name) - 1]
             if (out and out.endswith(ext) for ext in imgExt):
                 res = requests.get(domain + out, stream=True)
                 if res.status_code == 200:
-                    with open("./name",'wb') as f:
+                    with open(args.p + name,'wb') as f:
                         shutil.copyfileobj(res.raw, f)
                     print('Image sucessfully Downloaded: ',"./name")
                 else:
                     print('Image Couldn\'t be retrieved')
-        except:
+        except Exception as e:
             print("fail to save the image")
             continue
     return
 
 def main():
-    parser = argparse.ArgumentParser("Program the web scrap img from a url")
-    #parser.add_argument('-r', action='strore_true', help="recursively download omg from the url")
-    ScrapImg("http://olympus.realpython.org/profiles/aphrodite")
+    parser = argparse.ArgumentParser(prog='Spider',
+                    description='Scrap image from a url',
+                    epilog='./spider [-rlp] URL')
+    parser.add_argument('-r', default=False, action='store_true', help="recursively downloads the images in a URL received as a parameter.")
+    parser.add_argument('-l', type=int,default=5, help="indicates the maximum depth level of the recursive download. If not indicated, it will be 5.")
+    parser.add_argument('-p', type=str, default="./data/",help=" indicates the path where the downloaded files will be saved. If not specified, ./data/ will be used.")
+    parser.add_argument('URL', type=str, help="URL you want to scrap")
+    args = parser.parse_args()
+    print(args.r)
+    ScrapImg(args, args.URL, 0)
 
 
 if __name__ == "__main__":
