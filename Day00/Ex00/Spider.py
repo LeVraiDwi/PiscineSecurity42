@@ -3,6 +3,15 @@ import requests
 import shutil
 from bs4 import BeautifulSoup
 import argparse
+from threading import Thread, Lock
+
+def isValidExt(file: str):
+    imgExt = [".jpg", ".jpeg", ".png", ".gif",".bmp"]
+    ret: False
+    for ext in imgExt:
+        if file.endswith(ext) == True:
+            return True
+    return False
 
 def baseDomaine(url: str) -> str:
     protocol : str
@@ -22,45 +31,74 @@ def baseDomaine(url: str) -> str:
     domain = url[: endDomain + protocol.__len__()]
     return domain
 
-def ScrapImg(args: argparse.Namespace, url: str, depth: int):
-    req = Request(
-        url=url, 
-        headers={'User-Agent': 'Mozilla/5.0'}
-    )
-    imgExt = [".jpg", ".jpeg", ".png", ".gif",".bmp"]
-    domain = baseDomaine(url)
-    if domain == "":
-        print("wrong url")
-        return
-    page: requests._UrlopenRet
+def ScrapImg(args: argparse.Namespace, url: str, depth: int, lock: Lock):
+    global listUrls
+
     try:
-        page = urlopen(req)
-    except:
-        print("Impossible to Open the page")
+        _ = listUrls
+    except NameError:
+        listUrls = []
+
+    lock.acquire()
+    threads = []
+    if (listUrls != None and url in listUrls):
+        print("end")
+        lock.release()
         return
-    html_bytes = page.read()
-    html = html_bytes.decode("utf-8")
-    extract = BeautifulSoup(html, 'html.parser')
-    if args.r == True and depth < args.l:
-        for urls in extract.find_all('href'):
-            ScrapImg(args, urls, depth + 1)
-    for start in extract.find_all('img'):
+    elif listUrls == None:
+        listUrls = []
+        listUrls.append(url)
+    else:
+        listUrls.append(url)
+    lock.release()
+
+    try:
+        req = Request(
+            url=url, 
+            headers={'User-Agent': 'Mozilla/5.0'}
+        )
+        
+        domain = baseDomaine(url)
+        if domain == "":
+            print("wrong url")
+            return
+        page: requests._UrlopenRet
         try:
-            out = start.get('src')
-            print(out)
-            name = str.split(out, '/')
-            name = name[len(name) - 1]
-            if (out and out.endswith(ext) for ext in imgExt):
-                res = requests.get(domain + out, stream=True)
-                if res.status_code == 200:
-                    with open(args.p + name,'wb') as f:
-                        shutil.copyfileobj(res.raw, f)
-                    print('Image sucessfully Downloaded: ',"./name")
-                else:
-                    print('Image Couldn\'t be retrieved')
-        except Exception as e:
-            print("fail to save the image")
-            continue
+            page = urlopen(req)
+        except:
+            print("Impossible to Open the page")
+            return
+        html_bytes = page.read()
+        html = html_bytes.decode("utf-8")
+        extract = BeautifulSoup(html, 'html.parser')
+        if args.r == True and depth < args.l:
+            for urls in extract.find_all('a'):
+                thr = Thread(target=ScrapImg , args=(args, urls.get('href'), depth + 1, lock))
+                thr.start()
+                threads.append(thr)
+        for start in extract.find_all('img'):
+            try:
+                out = start.get('src')
+                name = str.split(out, '/')
+                name = name[len(name) - 1]
+                if (isValidExt(out)):
+                    res = requests.get(domain + out, stream=True)
+                    if res.status_code == 200:
+                        with open(args.p + "/" + name,'wb') as f:
+                            shutil.copyfileobj(res.raw, f)
+                            f.close()
+                        print('Image sucessfully Downloaded: ',"./name")
+                    else:
+                        print('Image Couldn\'t be retrieved')
+            except Exception as e:
+                print("fail to save the image")
+                print(e)
+                continue
+        extract.decompose()
+    except Exception as e:
+        print(e)
+    for t in threads:
+            t.join()
     return
 
 def main():
@@ -72,8 +110,10 @@ def main():
     parser.add_argument('-p', type=str, default="./data/",help=" indicates the path where the downloaded files will be saved. If not specified, ./data/ will be used.")
     parser.add_argument('URL', type=str, help="URL you want to scrap")
     args = parser.parse_args()
-    print(args.r)
-    ScrapImg(args, args.URL, 0)
+    
+    lock = Lock()
+    
+    ScrapImg(args, args.URL, 0, lock)
 
 
 if __name__ == "__main__":
