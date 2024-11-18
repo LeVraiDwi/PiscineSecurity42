@@ -3,9 +3,9 @@ from PIL import Image, ExifTags
 import piexif
 
 def main():
-    parser = argparse.ArgumentParser(prog='Spider',
-                    description='Scrap image from a url',
-                    epilog='./spider [-rlp] URL')
+    parser = argparse.ArgumentParser(prog='Scorpion',
+                    description='print img exif',
+                    epilog='./Scorpion Paths')
     parser.add_argument('Paths', type=str, help="path to file", nargs='*')
     args = parser.parse_args()
     

@@ -106,7 +106,7 @@ def main():
                     description='Scrap image from a url',
                     epilog='./spider [-rlp] URL')
     parser.add_argument('-r', default=False, action='store_true', help="recursively downloads the images in a URL received as a parameter.")
-    parser.add_argument('-l', type=int,default=5, help="indicates the maximum depth level of the recursive download. If not indicated, it will be 5.")
+    parser.add_argument('-l', type=int, default=5, help="indicates the maximum depth level of the recursive download. If not indicated, it will be 5.")
     parser.add_argument('-p', type=str, default="./data/",help=" indicates the path where the downloaded files will be saved. If not specified, ./data/ will be used.")
     parser.add_argument('URL', type=str, help="URL you want to scrap")
     args = parser.parse_args()
