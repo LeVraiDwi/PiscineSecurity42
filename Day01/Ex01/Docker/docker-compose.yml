@@ -7,6 +7,14 @@ services:
     ports:
       - 8089:80
     container_name: nginx_container
+  
+  tor:
+    image: tor:inc
+    build: ./tor
+    volumes:
+      - tor:/home
+    container_name: tor_container
 
 volumes:
   nginx:
+  tor:
