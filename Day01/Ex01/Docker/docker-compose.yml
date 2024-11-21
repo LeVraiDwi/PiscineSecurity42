@@ -1,6 +1,6 @@
 services:
   nginx:
-    image: nginx:1-alpine
+    image: nginx:inc
     build: ./nginx
     volumes:
       - ./nginx/:/usr/share/nginx/html
