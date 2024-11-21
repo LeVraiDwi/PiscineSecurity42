@@ -8,4 +8,4 @@ RUN apt install -y curl nginx tor
 
 COPY index.html /usr/share/nginx/html/
 
-CMD [ "nginx", "-g", "deamon off;"]
+CMD [ "nginx", "-g", "daemon off;"]
