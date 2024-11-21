@@ -1,0 +1,12 @@
+services:
+  nginx:
+    image: nginx:inc
+    build: ./nginx
+    volumes:
+      - nginx:/home
+    ports:
+      - 8089:80
+    container_name: nginx_container
+
+volumes:
+  nginx:
