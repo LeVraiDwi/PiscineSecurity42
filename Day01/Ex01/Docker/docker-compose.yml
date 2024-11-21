@@ -3,7 +3,7 @@ services:
     image: nginx:1-alpine
     build: ./nginx
     volumes:
-      - nginx:/home
+      - ./nginx/:/usr/share/nginx/html
     ports:
       - 80:80
     container_name: nginx_container
