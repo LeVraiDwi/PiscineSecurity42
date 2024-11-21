@@ -1,12 +1,14 @@
 services:
   nginx:
-    image: nginx:inc
+    image: nginx:1-alpine
     build: ./nginx
     volumes:
       - nginx:/home
     ports:
-      - 8089:80
+      - 80:80
     container_name: nginx_container
+    networks:
+      - tor_network
   
   tor:
     image: tor:inc
@@ -14,6 +16,14 @@ services:
     volumes:
       - tor:/home
     container_name: tor_container
+    depends_on:
+      - nginx
+    networks:
+      - tor_network
+
+networks:
+  tor_network:
+    driver: bridge
 
 volumes:
   nginx:
