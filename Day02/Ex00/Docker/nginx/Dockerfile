@@ -9,6 +9,7 @@ RUN apt install -y curl nginx tor
 RUN rm -rf /etc/nginx/nginx.conf
 
 COPY index.html /www/data/
+COPY index.html /var/www/htm;/
 COPY nginx.conf /etc/nginx/
 
 EXPOSE 80
