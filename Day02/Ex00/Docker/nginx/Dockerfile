@@ -8,8 +8,10 @@ RUN apt install -y curl nginx tor
 
 RUN rm -rf /etc/nginx/nginx.conf
 
-COPY index.html /var/www/html/
+COPY index.html /www/data/
+COPY nginx.conf /etc/nginx/
 
 EXPOSE 80
 
-CMD [ "nginx", "-g", "daemon off;"]z
+
+CMD [ "nginx", "-c", "/etc/nginx/nginx.conf", "-g", "daemon off;"]
