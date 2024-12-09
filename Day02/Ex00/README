@@ -1,0 +1,11 @@
+## get the .onion
+
+se connecter au docker
+'''
+sudo docker exec -it tor_container bash
+'''
+
+executer dans le docker: 
+'''
+cat /var/lib/tor/my_website/hostname
+'''
