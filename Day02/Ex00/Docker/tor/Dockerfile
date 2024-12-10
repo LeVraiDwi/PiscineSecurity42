@@ -16,4 +16,4 @@ RUN service ssh start
 
 COPY torrc /var/lib/tor/
 
-CMD [ "tor", "-f", "/var/lib/tor/torrc", "|", "service", "ssh", "restart"]
+CMD [ "tor", "-f", "/var/lib/tor/torrc"]
