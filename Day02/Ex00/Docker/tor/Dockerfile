@@ -14,6 +14,4 @@ EXPOSE 42
 
 COPY torrc /var/lib/tor/
 
-RUN /usr/sbin/sshd -D
-
-CMD [ "tor", "-f", "/var/lib/tor/torrc"]
+ENTRYPOINT service ssh start && tor -f /var/lib/tor/torrc
