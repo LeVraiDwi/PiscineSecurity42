@@ -12,8 +12,6 @@ RUN sed -i 's/#Port 22/Port 42/' /etc/ssh/sshd_config
 
 EXPOSE 42
 
-RUN service ssh start
-
 COPY torrc /var/lib/tor/
 
-CMD [ "tor", "-f", "/var/lib/tor/torrc"]
+ENTRYPOINT service ssh restart && tor -f /var/lib/tor/torrc
