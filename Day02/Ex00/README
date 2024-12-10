@@ -9,3 +9,15 @@ executer dans le docker:
 '''
 cat /var/lib/tor/my_website/hostname
 '''
+
+## ssh
+
+Find the docker ip address:
+'''
+docker inspect tor_container
+'''
+
+connect with:
+'''
+ssh -p 42 [userName]@[addressidDocker]
+'''
