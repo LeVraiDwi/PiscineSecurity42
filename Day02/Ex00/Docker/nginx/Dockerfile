@@ -12,7 +12,6 @@ RUN sed -i 's/#Port 22/Port 42/' /etc/ssh/sshd_config
 
 EXPOSE 42
 
-COPY torrc /var/lib/tor/
 COPY index.html /var/www/html/
 
 EXPOSE 80
