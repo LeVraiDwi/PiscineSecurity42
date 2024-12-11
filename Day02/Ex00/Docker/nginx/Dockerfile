@@ -16,4 +16,4 @@ COPY index.html /var/www/html/
 
 EXPOSE 80
 
-ENTRYPOINT service ssh start && nginx -c /etc/nginx/nginx.conf -g daemon off;
+ENTRYPOINT service ssh start && nginx -c /etc/nginx/nginx.conf -g "daemon off;"
